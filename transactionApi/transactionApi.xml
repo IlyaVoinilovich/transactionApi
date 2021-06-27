@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>transactionApi</name>
+    </assembly>
+    <members>
+        <member name="M:transactionApi.Controllers.transactionController.GetTransactions">
+            <summary>
+                Get the state of your  transaction.
+            </summary>
+            <returns>The user's Transaction.</returns>
+        </member>
+        <member name="M:transactionApi.Controllers.transactionController.CreateTransaction(transactionApi.Models.CreateTransactionCommand)">
+            <summary>
+                Create transaction.
+            </summary>
+            <param name="command">Request body.</param>
+            <response code="200">If the wallet has been successfully replenished.</response>
+            <response code="400">If the request body will not pass validation.</response>
+        </member>
+        <member name="T:transactionApi.Helpers.MyLogEvents">
+            <summary>
+            MyLogEvents
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.GenerateItems">
+            <summary>
+            GenerateItems
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.ListItems">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.GetItem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.InsertItem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.UpdateItem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.DeleteItem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.TestItem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.GetItemNotFound">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.MyLogEvents.UpdateItemNotFound">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:transactionApi.TransactionBdContext.Transactions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:transactionApi.TransactionBdContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{transactionApi.TransactionBdContext})">
+            <summary>
+            
+            </summary>
+            <param name="options"></param>
+        </member>
+    </members>
+</doc>
