@@ -28,7 +28,7 @@ namespace transactionApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks().AddDbContextCheck<TransactionBdContext>();
-            services.AddDbContext<TransactionBdContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<TransactionBdContext>(options => options.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
             services.AddScoped<ITransaction, TransactionService>();
             services.AddAuthentication(x =>
             {
@@ -74,6 +74,11 @@ namespace transactionApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json") // Duplicate == Json1
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json") // Duplicate == Json1
+            .AddEnvironmentVariables() // Duplicate == Environment
+            .Build();
             app.UseSwagger(c =>
             {
                 c.SerializeAsV2 = true;
