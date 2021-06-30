@@ -19,14 +19,14 @@ namespace transactionApi.Services
 
         public async Task<TransactionView> CreateTransaction(CreateTransactionCommand command, long IdUser)
         {
-            var transaction = new Transaction(command.Id,command.date,command.balance,command.currency, IdUser,"no");
+            var transaction = new Transaction(command.date,command.balance,command.currency, IdUser);
             await _transactionBdContext.Transactions.AddAsync(transaction);
             await _transactionBdContext.SaveChangesAsync();
             return new TransactionView(transaction);
         }
-        public async Task<TransactionView> UpdateTransaction(CreateTransactionCommand command)
+        public async Task<TransactionView> UpdateTransaction(CreateTransactionCommand command, long IdUser)
         {
-            var transaction = new Transaction(command.Id,command.date,command.balance,command.currency,command.idUser,"yes");
+            var transaction = new Transaction(command.date, command.balance, command.currency, IdUser);
             _transactionBdContext.Entry(transaction).State = EntityState.Modified;
             await _transactionBdContext.SaveChangesAsync();
             return new TransactionView(transaction);
@@ -34,7 +34,7 @@ namespace transactionApi.Services
 
         public async Task<IEnumerable<TransactionView>> GetTransactions(long IdUser)
         {
-            return await _transactionBdContext.Transactions.AsNoTracking().Where(x => x.User == IdUser).Select(x => new TransactionView(x)).ToArrayAsync();
+            return await _transactionBdContext.Transactions.AsNoTracking().Where(x => x.IdUser == IdUser).Select(x => new TransactionView(x)).ToArrayAsync();
         }
     }
 }

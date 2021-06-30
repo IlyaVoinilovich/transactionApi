@@ -10,7 +10,7 @@ namespace transactionApi.Interface
     {
         public Task<TransactionView> CreateTransaction(CreateTransactionCommand command,long idUser);
         public Task<IEnumerable<TransactionView>> GetTransactions(long IdUser);
-        public Task<TransactionView> UpdateTransaction(CreateTransactionCommand command);
+        public Task<TransactionView> UpdateTransaction(CreateTransactionCommand command,long idUser);
 
     }
 }

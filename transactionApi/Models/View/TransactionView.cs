@@ -9,9 +9,8 @@ namespace transactionApi.Models
         {
             _transaction = transaction;
         }
-        public DateTime date => _transaction.Date;
+        public DateTime date => _transaction.date;
         public decimal balance => _transaction.Balance;
         public string currency => _transaction.Currency;
-        public string state => _transaction.State;
     }
 }

@@ -10,8 +10,8 @@ using transactionApi;
 namespace transactionApi.Migrations
 {
     [DbContext(typeof(TransactionBdContext))]
-    [Migration("20210629212121_State")]
-    partial class State
+    [Migration("20210630160421_tran")]
+    partial class tran
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,14 +34,11 @@ namespace transactionApi.Migrations
                     b.Property<string>("Currency")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("User")
+                    b.Property<long>("IdUser")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

@@ -21,9 +21,10 @@ namespace transactionApi.Migrations
 
             modelBuilder.Entity("transactionApi.Models.Transaction", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
@@ -31,14 +32,11 @@ namespace transactionApi.Migrations
                     b.Property<string>("Currency")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("User")
+                    b.Property<long>("IdUser")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

@@ -36,11 +36,8 @@ namespace transactionApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string con = "Server=.\\SQLEXPRESS;Database=Transaction;Trusted_Connection=True;";
-            services.AddDbContext<TransactionBdContext>(options => options.UseSqlServer(con), contextLifetime: ServiceLifetime.Transient,optionsLifetime: ServiceLifetime.Singleton);
+            services.AddDbContext<TransactionBdContext>(options => options.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")), contextLifetime: ServiceLifetime.Transient,optionsLifetime: ServiceLifetime.Singleton);
             services.AddSingleton<ITransaction, TransactionService>();
-            // RabbitMQ
-            services.AddSingleton<ISagaRepository<TransactionState>, InMemorySagaRepository<TransactionState>>();
             services.AddHealthChecks().AddDbContextCheck<TransactionBdContext>();
 
             services.AddAuthentication(x =>
@@ -59,17 +56,6 @@ namespace transactionApi
                     ValidateAudience = false
                 };
             });
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-                }
-                );
-            });
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService", Version = "v1" });
@@ -101,9 +87,7 @@ namespace transactionApi
                         new List<string>()
                     }
                 });
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                c.IncludeXmlComments("transactionApi.xml");
             });
             services.AddCors(options =>
             {
@@ -112,29 +96,10 @@ namespace transactionApi
                     builder.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
-                });
+                }
+                );
             });
-            services.AddMassTransit(x =>
-            {
-                x.AddSagaStateMachine<TransactionStateMachine, TransactionState>();
-
-                x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
-                {
-       
-                    cfg.Host("localhost", h=>
-                    {
-                        h.Username("guest");
-                        h.Password("guest");
-                    });
-
-                    cfg.ReceiveEndpoint("TransactionCreate", e =>
-                    {
-                        e.Durable = false;
-                        e.ConfigureSaga<TransactionState>(provider);
-                    });
-                }));
-            });
-            services.AddSingleton<IHostedService, BusService>();
+            services.AddControllers();
         }
 
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

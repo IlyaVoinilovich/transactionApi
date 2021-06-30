@@ -27,7 +27,7 @@ namespace transactionApi.StateMachine
 
                 When(TransactionApproved)
                     // Add investment into portfolio
-                    .Then(ctx => _transaction.UpdateTransaction(ctx.Instance.Transaction))
+                   
                     .Finalize(),
 
                 When(WebWalletRevoked)

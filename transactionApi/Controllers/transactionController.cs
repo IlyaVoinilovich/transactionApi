@@ -20,15 +20,13 @@ namespace transactionApi.Controllers
     {
         private readonly ILogger<transactionController> _logger;
         private readonly ITransaction _transaction;
-        private readonly IBus _bus;
 
         private long UserId => long.Parse(User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-        public transactionController(ILogger<transactionController> logger, ITransaction transaction, IBus bus)
+        public transactionController(ILogger<transactionController> logger, ITransaction transaction)
         {
             _logger = logger;
             _transaction = transaction;
-            _bus = bus;
         }
         /// <summary>
         ///     Get the state of your  transaction.
@@ -61,7 +59,6 @@ namespace transactionApi.Controllers
             _logger.LogInformation(MyLogEvents.GenerateItems, "Create transaction User:{Id}", UserId);
             command.Id = Guid.NewGuid();
             command.idUser = UserId;
-            _bus.Publish<ITransactionCreate>(new { CreateTransactionCommand = command }); 
             return Ok(await _transaction.CreateTransaction(command, UserId));
         }
     }

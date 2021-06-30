@@ -9,21 +9,21 @@ namespace transactionApi.Models
     public class Transaction
     {
         [Key]
-        public Guid Id { get; set; }
-        public DateTime Date { get; set; }
-        public long User { get; set; }
+        public long Id { get; set; }
+        public DateTime date { get; set; }
+        public long IdUser { get; set; }
         public decimal Balance { get; set; }
         public string Currency { get; set; }
-        public string State { get; set; }
-        public Transaction(Guid id,DateTime date,decimal balance,string currency,long user,string state)
+
+        public Transaction(DateTime dateTime,decimal balance,string currency,long User)
         {
-            Id = id;
-            Date = date;
-            User = user;
+            date = dateTime;
             Balance = balance;
             Currency = currency;
-            State = state;
+            IdUser = User;
         }
-
+        public Transaction()
+        {
+        }
     }
 }

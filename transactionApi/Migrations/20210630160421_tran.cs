@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace transactionApi.Migrations
 {
-    public partial class State : Migration
+    public partial class tran : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,11 +13,10 @@ namespace transactionApi.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    User = table.Column<long>(type: "bigint", nullable: false),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IdUser = table.Column<long>(type: "bigint", nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
