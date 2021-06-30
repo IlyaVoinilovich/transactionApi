@@ -1,28 +1,29 @@
-﻿using System;
+﻿using Automatonymous;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace transactionApi.Models
 {
+    [Serializable]
     public class Transaction
     {
         [Key]
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public DateTime Date { get; set; }
-        public long Iduser { get; set; }
+        public long User { get; set; }
         public decimal Balance { get; set; }
         public string Currency { get; set; }
-        public string Info { get; set; }
-
-        public Transaction(DateTime date, long iduser, decimal balance, string currency, string info)
+        public string State { get; set; }
+        public Transaction(Guid id,DateTime date,decimal balance,string currency,long user,string state)
         {
+            Id = id;
             Date = date;
-            Iduser = iduser;
+            User = user;
             Balance = balance;
             Currency = currency;
-            Info = info; 
+            State = state;
         }
+
     }
 }

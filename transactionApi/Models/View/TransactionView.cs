@@ -12,6 +12,6 @@ namespace transactionApi.Models
         public DateTime date => _transaction.Date;
         public decimal balance => _transaction.Balance;
         public string currency => _transaction.Currency;
-        public string info => _transaction.Info;
+        public string state => _transaction.State;
     }
 }

@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using transactionApi.Interface;
 using transactionApi.Models;
 using transactionApi.Helpers;
+using MassTransit;
+using System;
 
 namespace transactionApi.Controllers
 {
@@ -18,13 +20,15 @@ namespace transactionApi.Controllers
     {
         private readonly ILogger<transactionController> _logger;
         private readonly ITransaction _transaction;
+        private readonly IBus _bus;
 
         private long UserId => long.Parse(User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-        public transactionController(ILogger<transactionController> logger, ITransaction transaction)
+        public transactionController(ILogger<transactionController> logger, ITransaction transaction, IBus bus)
         {
             _logger = logger;
             _transaction = transaction;
+            _bus = bus;
         }
         /// <summary>
         ///     Get the state of your  transaction.
@@ -38,6 +42,7 @@ namespace transactionApi.Controllers
         public async Task<ActionResult<IEnumerable<TransactionView>>> GetTransactions()
         {
             _logger.LogInformation(MyLogEvents.GetItem, "All transaction User:{Id}",UserId);
+
             return Ok(await _transaction.GetTransactions(UserId));
         }
         /// <summary>
@@ -54,6 +59,9 @@ namespace transactionApi.Controllers
         public async Task<ActionResult<TransactionView>> CreateTransaction([FromBody] CreateTransactionCommand command)
         {
             _logger.LogInformation(MyLogEvents.GenerateItems, "Create transaction User:{Id}", UserId);
+            command.Id = Guid.NewGuid();
+            command.idUser = UserId;
+            _bus.Publish<ITransactionCreate>(new { CreateTransactionCommand = command }); 
             return Ok(await _transaction.CreateTransaction(command, UserId));
         }
     }

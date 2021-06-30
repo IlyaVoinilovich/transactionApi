@@ -68,6 +68,68 @@
             
             </summary>
         </member>
+        <member name="F:transactionApi.Helpers.RabbitMqConfig.Server">
+            <summary>
+            Server address
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.RabbitMqConfig.User">
+            <summary>
+            Username
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.RabbitMqConfig.Password">
+            <summary>
+            Password
+            </summary>
+        </member>
+        <member name="F:transactionApi.Helpers.RabbitMqConfig.Port">
+            <summary>
+            Server port
+            </summary>
+        </member>
+        <member name="M:transactionApi.Helpers.RabbitMqConfig.GetServiceUri">
+            <summary>
+            Get complete url
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:transactionApi.Helpers.RabbitMqConfig.ToString">
+            <summary>
+            Stringify connection information
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:transactionApi.Interface.ICreateTransactionCommandWebWalletApproved.Transaction">
+            <summary>
+            Approved investments
+            </summary>
+        </member>
+        <member name="P:transactionApi.StateMachine.TransactionStateMachine.WaitingForResponce">
+            <summary>
+            State waiting for responce from decision process
+            </summary>
+        </member>
+        <member name="P:transactionApi.StateMachine.TransactionStateMachine.TransactionCreate">
+            <summary>
+            New investment occured on bus
+            </summary>
+        </member>
+        <member name="P:transactionApi.StateMachine.TransactionStateMachine.TransactionApproved">
+            <summary>
+            Composite event investment approved
+            </summary>
+        </member>
+        <member name="P:transactionApi.StateMachine.TransactionStateMachine.WebWalletApproved">
+            <summary>
+            Order management approved the investment
+            </summary>
+        </member>
+        <member name="P:transactionApi.StateMachine.TransactionStateMachine.WebWalletRevoked">
+            <summary>
+            Order management revoked the investment
+            </summary>
+        </member>
         <member name="P:transactionApi.TransactionBdContext.Transactions">
             <summary>
             

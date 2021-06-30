@@ -12,6 +12,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using transactionApi.Interface;
 using transactionApi.Services;
+using System.Reflection;
+using System.Collections.Generic;
+using MassTransit.Saga;
+using MassTransit;
+using MassTransit.RabbitMqTransport;
+using transactionApi.Helpers;
+using transactionApi.StateMachine;
+using Automatonymous;
+using System.Security.Policy;
 
 namespace transactionApi
 {
@@ -27,9 +36,13 @@ namespace transactionApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string con = "Server=.\\SQLEXPRESS;Database=Transaction;Trusted_Connection=True;";
+            services.AddDbContext<TransactionBdContext>(options => options.UseSqlServer(con), contextLifetime: ServiceLifetime.Transient,optionsLifetime: ServiceLifetime.Singleton);
+            services.AddSingleton<ITransaction, TransactionService>();
+            // RabbitMQ
+            services.AddSingleton<ISagaRepository<TransactionState>, InMemorySagaRepository<TransactionState>>();
             services.AddHealthChecks().AddDbContextCheck<TransactionBdContext>();
-            services.AddDbContext<TransactionBdContext>(options => options.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
-            services.AddScoped<ITransaction, TransactionService>();
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,24 +68,77 @@ namespace transactionApi
                     .AllowAnyHeader();
                 }
                 );
-            }
-            );
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Version = "v1",
-                    Title = "FakeUsers API",
-                    Description = "A simple example ASP.NET Core Web API",
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
                 });
-                var filePath = Path.Combine(AppContext.BaseDirectory, "transactionApi.xml");
-                c.IncludeXmlComments(filePath);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
+                });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
+            services.AddMassTransit(x =>
+            {
+                x.AddSagaStateMachine<TransactionStateMachine, TransactionState>();
+
+                x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                {
+       
+                    cfg.Host("localhost", h=>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+
+                    cfg.ReceiveEndpoint("TransactionCreate", e =>
+                    {
+                        e.Durable = false;
+                        e.ConfigureSaga<TransactionState>(provider);
+                    });
+                }));
+            });
+            services.AddSingleton<IHostedService, BusService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json") // Duplicate == Json1
